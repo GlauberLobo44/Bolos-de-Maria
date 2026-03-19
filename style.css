@@ -85,8 +85,8 @@ button {
 }
 
 .day-status { 
-    width:80%;
-    font-size: 10em; 
+    
+    font-size: 2em; 
     font-weight: bold; 
     color: var(--primary); 
 }
