@@ -12,7 +12,7 @@
     --text: #f0f0f0; 
     --card: #2d2d2d; 
     --border: #444;
-    display:none;
+    display:hide;
 }
 
 * { 
