@@ -92,7 +92,8 @@ button {
     color: var(--primary); 
 }
  
-.agenda-layout { 
+.agenda-layout {
+    font-size:1.3em;
     display: grid; grid-template-columns: 300px 1fr; 
     gap: 20px; 
 }
@@ -154,7 +155,7 @@ button {
     align-items: center; 
     padding: 8px 0; 
     border-bottom: 1px solid var(--border); 
-    font-size: 2em; 
+    font-size: 1.2em; 
 }
 
 .client-edit-row { 
