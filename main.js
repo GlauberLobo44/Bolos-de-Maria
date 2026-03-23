@@ -143,7 +143,7 @@ function renderCalendar() {
 
         slot.innerHTML = `
             <span style="position: absolute; top: 3px; left: 5px; font-size: 25px;">${i}</span>
-            <span style="font-weight: bold; font-size: 3em;">${ords.length || ''}</span>
+            <span style="font-weight: bold; font-size: 2.5em;">${ords.length || ''}</span>
         `;
 
         slot.onclick = () => { dataSelecionada = {d:i, m:m}; openListaDia(i, m); };
