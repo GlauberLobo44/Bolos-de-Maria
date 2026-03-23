@@ -214,51 +214,5 @@ input, select {
     padding: 5px 0; 
 }
 
-/* Garante que o grid ocupe toda a largura e tenha altura mínima */
-#calGrid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr); /* 7 colunas iguais */
-    gap: 8px; /* Espaço entre os dias */
-    width: 100%;
-    margin-top: 15px;
-}
-
-/* Ajusta o tamanho de cada "quadradinho" do dia */
-.day-slot {
-    min-height: 100px; /* Aumente este valor para o calendário ficar "mais alto" */
-    background: #fff;
-    border: 1px solid #eee;
-    border-radius: 8px;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    cursor: pointer;
-    transition: transform 0.2s;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.day-slot:hover {
-    background: #f0f7ff;
-    transform: translateY(-2px);
-}
-
-/* Deixa o número do dia maior */
-.day-number {
-    font-weight: bold;
-    font-size: 1.1em;
-    color: #333;
-}
-
-/* Deixa a bolinha de status mais visível */
-.day-status {
-    align-self: flex-end;
-    background: #ffc107;
-    color: #000;
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-size: 0.8em;
-    font-weight: bold;
-}
 
 
