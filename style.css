@@ -223,18 +223,4 @@ input, select {
     margin-top: 15px;
 }
 
-/* Ajusta o tamanho de cada "quadradinho" do dia */
-.day-slot {
-    min-height: 100px; /* Aumente este valor para o calendário ficar "mais alto" */
-    background: #fff;
-    border: 1px solid #eee;
-    border-radius: 8px;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    cursor: pointer;
-    transition: transform 0.2s;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
 
