@@ -150,13 +150,60 @@ let config = {
         }
     }
 
-    function createOrderCard(p) {
-        const c = document.createElement('div'); c.className = 'order-card'; c.innerText = p.nome; 
-        c.draggable = true;
-        c.ondragstart = e => e.dataTransfer.setData("text", p.id); 
-        c.onclick = () => openFormPedido(p.id);
-        return c;
+   function createOrderCard(p) {
+    // Lógica para esconder o card se a data de entrega já passou
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    
+    // Considera o ano atual selecionado no sistema para a comparação
+    const anoAtivo = parseInt(document.getElementById('selAno').value);
+    const dataEntrega = new Date(anoAtivo, p.mes, p.dia);
+
+    // Se a data do pedido for anterior a hoje, não renderiza nada
+    if (p.local !== 'pendentes' && dataEntrega < hoje) {
+        return document.createTextNode(''); 
     }
+
+    const c = document.createElement('div'); 
+    c.className = 'order-card';
+    c.draggable = true;
+    c.ondragstart = e => e.dataTransfer.setData("text", p.id);
+    
+    // Layout do Card: Nome + Data de Criação + Botão Deletar
+    c.innerHTML = `
+        <div style="flex-grow: 1; pointer-events: none;">
+            <div style="font-weight: bold;">${p.nome}</div>
+            <div style="font-size: 10px; color: #666;">
+                Criado em: ${p.id ? new Date(parseInt(p.id)).toLocaleDateString('pt-BR') : '---'}
+            </div>
+        </div>
+        <button onclick="event.stopPropagation(); removerPedidoCard('${p.id}')" 
+                style="background:none; border:none; color:red; font-weight:bold; cursor:pointer; padding: 5px;">
+            ✕
+        </button>
+    `;
+
+    // Ao clicar no card (exceto no botão), abre o formulário
+    c.onclick = () => openFormPedido(p.id);
+    
+    // Estilo para alinhar o conteúdo e o botão
+    c.style.display = 'flex';
+    c.style.justifyContent = 'space-between';
+    c.style.alignItems = 'center';
+    
+    return c;
+}
+
+// Função auxiliar para o botão de deletar do card (sem fechar modais inexistentes)
+function removerPedidoCard(id) {
+    if(confirm("Deseja excluir este pedido?")) {
+        pedidos = pedidos.filter(p => p.id != id);
+        salvarTudo();
+        renderCalendar();
+        renderAgenda();
+    }
+}
+
 
     function handleDrop(e, loc) { 
         e.preventDefault(); 
