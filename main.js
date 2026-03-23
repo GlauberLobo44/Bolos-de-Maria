@@ -142,8 +142,8 @@ function renderCalendar() {
         slot.style.color = 'black';
 
         slot.innerHTML = `
-            <span style="position: absolute; top: 3px; left: 5px; font-size: 11px;">${i}</span>
-            <span style="font-weight: bold; font-size: 1.2em;">${ords.length || ''}</span>
+            <span style="position: absolute; top: 3px; left: 5px; font-size: 25px;">${i}</span>
+            <span style="font-weight: bold; font-size: 3em;">${ords.length || ''}</span>
         `;
 
         slot.onclick = () => { dataSelecionada = {d:i, m:m}; openListaDia(i, m); };
