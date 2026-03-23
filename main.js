@@ -118,10 +118,10 @@ let config = {
         return;
     }
     // 1. Captura e Limpeza dos valores
-    const nome = document.getElementById('pNome').value.trim();
-    const contato = document.getElementById('pContato').value.trim();
-    const massa = document.getElementById('pMassa').value;
-    const tamanho = document.getElementById('pTamanho').value;
+    nome = document.getElementById('pNome').value.trim();
+    contato = document.getElementById('pContato').value.trim();
+    massa = document.getElementById('pMassa').value;
+    tamanho = document.getElementById('pTamanho').value;
 
     // 2. Condição de Bloqueio (Validação)
     if (!nome || !contato || !massa || massa === "Vazio" || !tamanho || tamanho === "Vazio") {
@@ -167,7 +167,7 @@ let config = {
     `;
     document.getElementById('modalRecibo').style.display = 'flex';
 }
-}
+
 
     function renderCalendar() {
         const grid = document.getElementById('calGrid'); grid.innerHTML = '';
