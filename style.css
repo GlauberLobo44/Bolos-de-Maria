@@ -41,10 +41,12 @@ button {
     border-radius: 6px; 
     background: var(--primary); 
     color: white; 
-    font-size:25px;
     font-weight: bold; 
 }
 
+nav button{
+    font-size:25px;
+}
 
         
 .page { 
