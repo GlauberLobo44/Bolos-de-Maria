@@ -188,7 +188,7 @@ function createOrderCard(p) {
     c.innerHTML = `
         <div style="flex-grow: 1; pointer-events: none;">
             <div style="font-weight: bold;">${p.nome}</div>
-            <div style="font-size: 11px; color: #eee;">Entrega: ${diaF}/${mesF}</div>
+            <div style="font-size: 15px; color: #eee; font-weight: bold;">Entrega: ${diaF}/${mesF}</div>
         </div>
         <button onclick="event.stopPropagation(); removerPedidoCard('${p.id}')" style="background:none; border:none; color:white; font-weight:bold; cursor:pointer;">X</button>
     `;
