@@ -88,8 +88,7 @@ button {
 .day-status { 
     color:black;
     font-size: 2em; 
-    font-weight: bold; 
-    color: var(--primary); 
+    font-weight: bold;  
 }
  
 .agenda-layout {
