@@ -92,19 +92,43 @@ function salvarPedido() {
 }
 
 function renderCalendar() {
-    const grid = document.getElementById('calGrid'); grid.innerHTML = '';
-    const m = parseInt(document.getElementById('selMes').value), a = parseInt(document.getElementById('selAno').value);
+    const grid = document.getElementById('calGrid'); 
+    grid.innerHTML = '';
+    const m = parseInt(document.getElementById('selMes').value), 
+          a = parseInt(document.getElementById('selAno').value);
+    
     const hoje = new Date().setHours(0,0,0,0);
     const dias = new Date(a, m + 1, 0).getDate();
+
     for (let i = 1; i <= dias; i++) {
-        // Filtra pedidos do dia que não estão vencidos
-        const ords = pedidos.filter(p => p.dia == i && p.mes == m && new Date(a, m, i).getTime() >= hoje);
-        const slot = document.createElement('div'); slot.className = 'day-slot';
-        slot.innerHTML = `<span class="day-number">${i}</span><span class="day-status">${ords.length || ''}</span>`;
+        // Filtra pedidos do dia (ajuste o filtro se quiser ver pedidos passados também)
+        const ords = pedidos.filter(p => p.dia == i && p.mes == m);
+        
+        const slot = document.createElement('div'); 
+        slot.className = 'day-slot';
+        
+        // Estilização inline para garantir o layout solicitado:
+        // Numero no topo esquerdo, Status no centro, Cor preta
+        slot.style.display = "flex";
+        slot.style.flexDirection = "column";
+        slot.style.justifyContent = "space-between";
+        slot.style.alignItems = "center";
+        slot.style.position = "relative";
+        slot.style.minHeight = "60px"; // Ajuste conforme sua preferência de altura
+        slot.style.border = "1px solid #ddd"; // Borda simples
+        slot.style.color = "black";
+        slot.style.background = "none"; // Sem background
+
+        slot.innerHTML = `
+            <span class="day-number" style="position: absolute; top: 5px; left: 5px; font-size: 0.8em;">${i}</span>
+            <span class="day-status" style="margin: auto; font-weight: bold; font-size: 1.2em;">${ords.length || ''}</span>
+        `;
+
         slot.onclick = () => { dataSelecionada = {d:i, m:m}; openListaDia(i, m); };
         grid.appendChild(slot);
     }
 }
+
 
 function openListaDia(d, m) {
     dataSelecionada = {d, m}; document.getElementById('modalListaDia').style.display = 'flex';
