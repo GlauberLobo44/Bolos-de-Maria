@@ -95,25 +95,57 @@ let config = {
     }
 
     function salvarPedido() {
-        const id = document.getElementById('pId').value, 
-        nome = document.getElementById('pNome').value;
-        const p = { id: id || Date.now(), 
-            nome, contato: document.getElementById('pContato').value, massa: document.getElementById('pMassa').value, recheio: document.getElementById('pRecheio').value, cobertura: document.getElementById('pCobertura').value, tamanho: document.getElementById('pTamanho').value, camadas: parseInt(document.getElementById('pCamadas').value), dia: dataSelecionada.d, mes: dataSelecionada.m, local: id ? pedidos.find(x=>x.id==id).local : 'pendentes' };
-        
-            if(id) pedidos = pedidos.map(x => x.id == id ? p : x); else pedidos.push(p);
-            if(nome && !config.clientes.some(c => c.nome.toLowerCase() === nome.toLowerCase())) config.clientes.push({nome, contato: p.contato});
-        
-            salvarTudo(); 
-            closeModal('modalForm'); 
-            renderCalendar(); 
-            renderAgenda();
-        
-            const total = (parseFloat(config.sinal) + (config.massas[p.massa]||0) + ((config.recheios[p.recheio]||0)*p.camadas) + (config.coberturas[p.cobertura]||0) + (config.tamanhos[p.tamanho]||0)).toFixed(2);
-        
-            document.getElementById('reciboConteudo').innerHTML = `<div class="recibo-linha"><b>Cliente:</b> ${p.nome}</div><div class="recibo-linha"><b>Bolo:</b> ${p.massa}, ${p.tamanho} - <b>R$ ${total}</b></div><div class="recibo-linha"><b>Sinal:</b> R$ ${parseFloat(config.sinal).toFixed(2)} (incluso)</div>`;
-        
-            document.getElementById('modalRecibo').style.display = 'flex';
+    // 1. Captura e Limpeza dos valores
+    const nome = document.getElementById('pNome').value.trim();
+    const contato = document.getElementById('pContato').value.trim();
+    const massa = document.getElementById('pMassa').value;
+    const tamanho = document.getElementById('pTamanho').value;
+
+    // 2. Condição de Bloqueio (Validação)
+    if (!nome || !contato || !massa || massa === "Vazio" || !tamanho || tamanho === "Vazio") {
+        alert("⚠️ Os campos Nome, Contato, Massa e Tamanho são obrigatórios!");
+        return; // Interrompe a função e não salva
     }
+
+    // 3. Se passou na validação, segue o fluxo normal
+    const id = document.getElementById('pId').value, 
+          recheio = document.getElementById('pRecheio').value;
+
+    const p = { 
+        id: id || Date.now(), 
+        nome, 
+        contato, 
+        massa, 
+        recheio,
+        cobertura: document.getElementById('pCobertura').value, 
+        tamanho, 
+        camadas: parseInt(document.getElementById('pCamadas').value) || 1, 
+        dia: dataSelecionada.d, 
+        mes: dataSelecionada.m, 
+        local: id ? pedidos.find(x=>x.id==id).local : 'pendentes' 
+    };
+
+    if(id) pedidos = pedidos.map(x => x.id == id ? p : x); else pedidos.push(p);
+    if(nome && !config.clientes.some(c => c.nome.toLowerCase() === nome.toLowerCase())) {
+        config.clientes.push({nome, contato: p.contato});
+    }
+
+    salvarTudo(); 
+    closeModal('modalForm'); 
+    renderCalendar(); 
+    renderAgenda();
+
+    // Lógica do Recibo
+    const total = (parseFloat(config.sinal) + (config.massas[p.massa]||0) + ((config.recheios[p.recheio]||0)*p.camadas) + (config.coberturas[p.cobertura]||0) + (config.tamanhos[p.tamanho]||0)).toFixed(2);
+    document.getElementById('reciboConteudo').innerHTML = `
+        <div class="recibo-linha"><b>Cliente:</b> ${p.nome}</div>
+        <div class="recibo-linha"><b>Contato:</b> ${p.contato}</div>
+        <div class="recibo-linha"><b>Bolo:</b> ${p.massa}, ${p.tamanho} - <b>R$ ${total}</b></div>
+        <div class="recibo-linha"><b>Sinal:</b> R$ ${parseFloat(config.sinal).toFixed(2)} (incluso)</div>
+    `;
+    document.getElementById('modalRecibo').style.display = 'flex';
+}
+
 
     function renderCalendar() {
         const grid = document.getElementById('calGrid'); grid.innerHTML = '';
