@@ -94,34 +94,56 @@ function salvarPedido() {
 function renderCalendar() {
     const grid = document.getElementById('calGrid'); 
     grid.innerHTML = '';
+    
+    // Configuração do Grid para 7 colunas iguais
+    grid.style.display = 'grid';
+    grid.style.gridTemplateColumns = 'repeat(7, 1fr)';
+    grid.style.gap = '2px'; // Espaço fino entre os dias (estilo tabela)
+    grid.style.width = '100%';
+
     const m = parseInt(document.getElementById('selMes').value), 
           a = parseInt(document.getElementById('selAno').value);
     
-    const hoje = new Date().setHours(0,0,0,0);
-    const dias = new Date(a, m + 1, 0).getDate();
+    // 1. Renderiza o cabeçalho (Dom, Seg, Ter...)
+    diasSemana.forEach(dia => {
+        const h = document.createElement('div');
+        h.innerText = dia;
+        h.style.textAlign = 'center';
+        h.style.fontWeight = 'bold';
+        h.style.fontSize = '12px';
+        h.style.padding = '5px 0';
+        h.style.borderBottom = '1px solid #ccc';
+        grid.appendChild(h);
+    });
 
-    for (let i = 1; i <= dias; i++) {
-        // Filtra pedidos do dia (ajuste o filtro se quiser ver pedidos passados também)
+    // 2. Calcula o primeiro dia da semana para alinhar o calendário
+    const primeiroDiaMes = new Date(a, m, 1).getDay();
+    for (let s = 0; s < primeiroDiaMes; s++) {
+        const vazio = document.createElement('div');
+        vazio.style.border = '1px solid #f9f9f9'; // Espaço vazio sutil
+        grid.appendChild(vazio);
+    }
+
+    // 3. Renderiza os dias do mês
+    const totalDias = new Date(a, m + 1, 0).getDate();
+    for (let i = 1; i <= totalDias; i++) {
         const ords = pedidos.filter(p => p.dia == i && p.mes == m);
-        
-        const slot = document.createElement('div'); 
+        const slot = document.createElement('div');
         slot.className = 'day-slot';
         
-        // Estilização inline para garantir o layout solicitado:
-        // Numero no topo esquerdo, Status no centro, Cor preta
-        slot.style.display = "flex";
-        slot.style.flexDirection = "column";
-        slot.style.justifyContent = "space-between";
-        slot.style.alignItems = "center";
-        slot.style.position = "relative";
-        slot.style.minHeight = "60px"; // Ajuste conforme sua preferência de altura
-        slot.style.border = "1px solid #ddd"; // Borda simples
-        slot.style.color = "black";
-        slot.style.background = "none"; // Sem background
+        // Estilo visual solicitado: Numero topo-esquerdo, Status centro, cor preta
+        slot.style.position = 'relative';
+        slot.style.minHeight = '70px';
+        slot.style.border = '1px solid #ddd';
+        slot.style.display = 'flex';
+        slot.style.alignItems = 'center';
+        slot.style.justifyContent = 'center';
+        slot.style.cursor = 'pointer';
+        slot.style.color = 'black';
 
         slot.innerHTML = `
-            <span class="day-number" style="position: absolute; top: 5px; left: 5px; font-size: 0.8em;">${i}</span>
-            <span class="day-status" style="margin: auto; font-weight: bold; font-size: 1.2em;">${ords.length || ''}</span>
+            <span style="position: absolute; top: 3px; left: 5px; font-size: 11px;">${i}</span>
+            <span style="font-weight: bold; font-size: 1.2em;">${ords.length || ''}</span>
         `;
 
         slot.onclick = () => { dataSelecionada = {d:i, m:m}; openListaDia(i, m); };
