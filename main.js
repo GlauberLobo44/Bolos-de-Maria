@@ -205,12 +205,12 @@ let config = {
     c.innerHTML = `
         <div style="flex-grow: 1; pointer-events: none;">
             <div style="font-weight: bold;">${p.nome}</div>
-            <div style="font-size: 10px; color: #666;">
+            <div style="font-size: 12px; color: #white;">
                 Criado em: ${p.id ? new Date(parseInt(p.id)).toLocaleDateString('pt-BR') : '---'}
             </div>
         </div>
         <button onclick="event.stopPropagation(); removerPedidoCard('${p.id}')" 
-                style="background:none; border:none; color:red; font-weight:bold; cursor:pointer; padding: 5px;">
+                style="background:none; border:none; color:white; font-weight:bold; cursor:pointer; padding: 5px;">
             ✕
         </button>
     `;
