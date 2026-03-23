@@ -95,46 +95,35 @@ let config = {
     }
 
     function salvarPedido() {
-
+    // 1. Definição de Datas para a trava retroativa
     const hoje = new Date();
     hoje.setHours(0, 0, 0, 0);
     const anoAtivo = parseInt(document.getElementById('selAno').value);
     const dataPedido = new Date(anoAtivo, dataSelecionada.m, dataSelecionada.d);
 
-    // Nova trava de data retroativa
+    // Trava de data retroativa
     if (dataPedido < hoje) {
         alert("⚠️ Não é possível adicionar ou editar pedidos em datas que já passaram!");
         return;
     }
 
-    // Suas validações anteriores de campos vazios...
+    // 2. Captura dos valores dos inputs
     const nome = document.getElementById('pNome').value.trim();
     const contato = document.getElementById('pContato').value.trim();
     const massa = document.getElementById('pMassa').value;
     const tamanho = document.getElementById('pTamanho').value;
+    const recheio = document.getElementById('pRecheio').value;
 
+    // 3. Validação de campos obrigatórios (Unificada)
     if (!nome || !contato || !massa || massa === "Vazio" || !tamanho || tamanho === "Vazio") {
         alert("⚠️ Os campos Nome, Contato, Massa e Tamanho são obrigatórios!");
-        return;
-    }
-    // 1. Captura e Limpeza dos valores
-    nome = document.getElementById('pNome').value.trim();
-    contato = document.getElementById('pContato').value.trim();
-    massa = document.getElementById('pMassa').value;
-    tamanho = document.getElementById('pTamanho').value;
-
-    // 2. Condição de Bloqueio (Validação)
-    if (!nome || !contato || !massa || massa === "Vazio" || !tamanho || tamanho === "Vazio") {
-        alert("⚠️ Os campos Nome, Contato, Massa e Tamanho são obrigatórios!");
-        return; // Interrompe a função e não salva
+        return; 
     }
 
-    // 3. Se passou na validação, segue o fluxo normal
-    const id = document.getElementById('pId').value, 
-          recheio = document.getElementById('pRecheio').value;
-
+    // 4. Criação do objeto do pedido
+    const idExistente = document.getElementById('pId').value;
     const p = { 
-        id: id || Date.now(), 
+        id: idExistente || Date.now(), 
         nome, 
         contato, 
         massa, 
@@ -144,10 +133,16 @@ let config = {
         camadas: parseInt(document.getElementById('pCamadas').value) || 1, 
         dia: dataSelecionada.d, 
         mes: dataSelecionada.m, 
-        local: id ? pedidos.find(x=>x.id==id).local : 'pendentes' 
+        local: idExistente ? pedidos.find(x => x.id == idExistente).local : 'pendentes' 
     };
 
-    if(id) pedidos = pedidos.map(x => x.id == id ? p : x); else pedidos.push(p);
+    // 5. Atualização da lista e salvamento
+    if(idExistente) {
+        pedidos = pedidos.map(x => x.id == idExistente ? p : x);
+    } else {
+        pedidos.push(p);
+    }
+    
     if(nome && !config.clientes.some(c => c.nome.toLowerCase() === nome.toLowerCase())) {
         config.clientes.push({nome, contato: p.contato});
     }
@@ -155,18 +150,26 @@ let config = {
     salvarTudo(); 
     closeModal('modalForm'); 
     renderCalendar(); 
-    renderAgenda();
+    if(typeof renderAgenda === "function") renderAgenda();
 
-    // Lógica do Recibo
-    const total = (parseFloat(config.sinal) + (config.massas[p.massa]||0) + ((config.recheios[p.recheio]||0)*p.camadas) + (config.coberturas[p.cobertura]||0) + (config.tamanhos[p.tamanho]||0)).toFixed(2);
+    // 6. Gerar Recibo Visual
+    const vSinal = parseFloat(config.sinal) || 0;
+    const vMassa = config.massas[p.massa] || 0;
+    const vRecheio = (config.recheios[p.recheio] || 0) * p.camadas;
+    const vCobertura = config.coberturas[p.cobertura] || 0;
+    const vTamanho = config.tamanhos[p.tamanho] || 0;
+    
+    const total = (vSinal + vMassa + vRecheio + vCobertura + vTamanho).toFixed(2);
+
     document.getElementById('reciboConteudo').innerHTML = `
         <div class="recibo-linha"><b>Cliente:</b> ${p.nome}</div>
         <div class="recibo-linha"><b>Contato:</b> ${p.contato}</div>
         <div class="recibo-linha"><b>Bolo:</b> ${p.massa}, ${p.tamanho} - <b>R$ ${total}</b></div>
-        <div class="recibo-linha"><b>Sinal:</b> R$ ${parseFloat(config.sinal).toFixed(2)} (incluso)</div>
+        <div class="recibo-linha"><b>Sinal:</b> R$ ${vSinal.toFixed(2)} (incluso)</div>
     `;
     document.getElementById('modalRecibo').style.display = 'flex';
 }
+
 
 
     function renderCalendar() {
