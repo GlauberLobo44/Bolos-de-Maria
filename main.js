@@ -254,6 +254,36 @@ function removerPedidoCard(id) {
         }
         calcTotal();
     }
+
+
+    function imprimirRecibo() {
+    const conteudo = document.getElementById('reciboConteudo').innerHTML;
+    const janelaImpressao = window.open('', '', 'width=600,height=600');
+    
+    janelaImpressao.document.write(`
+        <html>
+            <head>
+                <title>Recibo de Pedido</title>
+                <style>
+                    body { font-family: sans-serif; padding: 20px; text-align: center; }
+                    .recibo-linha { margin-bottom: 10px; border-bottom: 1px dashed #ccc; padding-bottom: 5px; }
+                    h2 { color: #333; }
+                </style>
+            </head>
+            <body>
+                <h2>📄 Recibo de Pedido</h2>
+                ${conteudo}
+                <br>
+                <p style="font-size: 12px;">Gerado em: ${new Date().toLocaleString()}</p>
+            </body>
+        </html>
+    `);
+    
+    janelaImpressao.document.close();
+    janelaImpressao.print();
+    janelaImpressao.close();
+}
+
     
     function showPage(p) { 
         document.querySelectorAll('.page').forEach(pg => pg.classList.remove('active')); 
