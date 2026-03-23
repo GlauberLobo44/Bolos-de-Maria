@@ -167,7 +167,7 @@ let config = {
     `;
     document.getElementById('modalRecibo').style.display = 'flex';
 }
-
+}
 
     function renderCalendar() {
         const grid = document.getElementById('calGrid'); grid.innerHTML = '';
