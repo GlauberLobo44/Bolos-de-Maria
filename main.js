@@ -95,6 +95,28 @@ let config = {
     }
 
     function salvarPedido() {
+
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    const anoAtivo = parseInt(document.getElementById('selAno').value);
+    const dataPedido = new Date(anoAtivo, dataSelecionada.m, dataSelecionada.d);
+
+    // Nova trava de data retroativa
+    if (dataPedido < hoje) {
+        alert("⚠️ Não é possível adicionar ou editar pedidos em datas que já passaram!");
+        return;
+    }
+
+    // Suas validações anteriores de campos vazios...
+    const nome = document.getElementById('pNome').value.trim();
+    const contato = document.getElementById('pContato').value.trim();
+    const massa = document.getElementById('pMassa').value;
+    const tamanho = document.getElementById('pTamanho').value;
+
+    if (!nome || !contato || !massa || massa === "Vazio" || !tamanho || tamanho === "Vazio") {
+        alert("⚠️ Os campos Nome, Contato, Massa e Tamanho são obrigatórios!");
+        return;
+    }
     // 1. Captura e Limpeza dos valores
     const nome = document.getElementById('pNome').value.trim();
     const contato = document.getElementById('pContato').value.trim();
@@ -184,15 +206,11 @@ let config = {
 
    function createOrderCard(p) {
     // Lógica para esconder o card se a data de entrega já passou
-    const hoje = new Date();
-    hoje.setHours(0, 0, 0, 0);
-    
-    // Considera o ano atual selecionado no sistema para a comparação
+    const hoje = new Date().setHours(0, 0, 0, 0);
     const anoAtivo = parseInt(document.getElementById('selAno').value);
-    const dataEntrega = new Date(anoAtivo, p.mes, p.dia);
+    const dataEntregaObj = new Date(anoAtivo, p.mes, p.dia);
 
-    // Se a data do pedido for anterior a hoje, não renderiza nada
-    if (p.local !== 'pendentes' && dataEntrega < hoje) {
+    if (p.local !== 'pendentes' && dataEntregaObj.getTime() < hoje) {
         return document.createTextNode(''); 
     }
 
@@ -201,30 +219,31 @@ let config = {
     c.draggable = true;
     c.ondragstart = e => e.dataTransfer.setData("text", p.id);
     
-    // Layout do Card: Nome + Data de Criação + Botão Deletar
+    // Formata o dia e mês para exibição (ex: 05/04)
+    const diaFormatado = String(p.dia).padStart(2, '0');
+    const mesFormatado = String(p.mes + 1).padStart(2, '0');
+
     c.innerHTML = `
         <div style="flex-grow: 1; pointer-events: none;">
             <div style="font-weight: bold;">${p.nome}</div>
-            <div style="font-size: 12px; color: #white;">
-                Criado em: ${p.id ? new Date(parseInt(p.id)).toLocaleDateString('pt-BR') : '---'}
+            <div style="font-size: 12px; color: white;">
+                Entrega: ${diaFormatado}/${mesFormatado}
             </div>
         </div>
         <button onclick="event.stopPropagation(); removerPedidoCard('${p.id}')" 
                 style="background:none; border:none; color:white; font-weight:bold; cursor:pointer; padding: 5px;">
-            ✕
+            X
         </button>
     `;
 
-    // Ao clicar no card (exceto no botão), abre o formulário
     c.onclick = () => openFormPedido(p.id);
-    
-    // Estilo para alinhar o conteúdo e o botão
     c.style.display = 'flex';
     c.style.justifyContent = 'space-between';
     c.style.alignItems = 'center';
     
     return c;
 }
+
 
 // Função auxiliar para o botão de deletar do card (sem fechar modais inexistentes)
 function removerPedidoCard(id) {
