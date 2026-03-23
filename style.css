@@ -81,11 +81,12 @@ button {
     left: 8px; 
     font-size: 1.7em; 
     font-weight: bold; 
-    opacity: 0.5; 
+    opacity: 0.5;
+    color:black;
 }
 
 .day-status { 
-    
+    color:black;
     font-size: 2em; 
     font-weight: bold; 
     color: var(--primary); 
