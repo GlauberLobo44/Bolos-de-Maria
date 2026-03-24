@@ -1,18 +1,20 @@
 :root { 
-    --primary: #ff85a2; 
+    --primary: rgb(29, 174, 29); 
     --bg: #fff5f7; 
-    --text: #333; 
-    --card: #ffffff; 
-    --border: #ddd; 
+    --bg: #1a1a1a; 
+    --text: #f0f0f0; 
+    --card: #2d2d2d; 
+    --border: #444; 
     --font-size: 18px; 
 }
-
+/*
 .dark-mode { 
     --bg: #1a1a1a; 
     --text: #f0f0f0; 
     --card: #2d2d2d; 
     --border: #444;
 }
+*/
 
 * { 
     box-sizing: border-box; font-family: 'Segoe UI', sans-serif; 
@@ -132,7 +134,7 @@ nav button{
 
 .order-card { 
     background: var(--primary); 
-    color: white; 
+    color: var(--text); 
     padding: 8px; 
     margin-bottom: 8px; 
     border-radius: 5px; 
