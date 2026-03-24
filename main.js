@@ -27,8 +27,10 @@ function init() {
 function updateClienteInfo(idx, campo, valor) { config.clientes[idx][campo] = valor; salvarTudo(); }
 function addClienteManual() {
     const n = document.getElementById('addNomeCli').value.trim(), c = document.getElementById('addContCli').value.trim();
-    if(n) { config.clientes.push({nome: n, contato: c}); salvarTudo(); updateEditLists(); document.getElementById('addNomeCli').value=''; 
-           document.getElementById('addContCli').value=''; 
+    if(n) { 
+        config.clientes.push({nome: n, contato: c}); salvarTudo(); updateEditLists(); 
+        document.getElementById('addNomeCli').value=''; 
+        document.getElementById('addContCli').value=''; 
           }
 }
 
@@ -106,6 +108,7 @@ function salvarPedido() {
         <div class="recibo-linha"><b>Cliente:</b> ${p.nome}</div>
         <div class="recibo-linha"><b>Bolo:</b> ${p.massa}, ${p.tamanho} - <b>R$ ${total}</b></div>
         <div class="recibo-linha"><b>Contato:</b> ${p.contato}</div>
+        <div class="recibo-linha"><b>Sinal:</b> R$ ${config.sinal} <b>(Já incluso)</b></div>
     `;
     document.getElementById('modalRecibo').style.display = 'flex';
 }
@@ -156,16 +159,16 @@ function renderCalendar() {
         // Estilo visual do day-slot
         slot.style.position = 'relative';
         slot.style.minHeight = '70px';
-        slot.style.border = '1px solid #ddd';
+        slot.style.border = '1px solid #615c5c';
         slot.style.display = 'flex';
         slot.style.alignItems = 'center';
         slot.style.justifyContent = 'center';
         slot.style.cursor = 'pointer';
-        slot.style.color = 'black';
+        slot.style.color = 'var(--text)';
 
         slot.innerHTML = `
-            <span style="position: absolute; top: 3px; left: 5px; font-size: 25px;">${i}</span>
-            <span style="font-weight: bold; font-size: 2.5em;">${ords.length || ''}</span>
+            <span style="position: absolute; top: 3px; left: 5px; font-size: 25px; font-weight:bold;">${i}</span>
+            <span style="font-weight: bold; font-size: 2.5em; font-weight:bold;">${ords.length || ''}</span>
         `;
 
         slot.onclick = () => { dataSelecionada = {d:i, m:m}; openListaDia(i, m); };
