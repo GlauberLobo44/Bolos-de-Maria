@@ -49,7 +49,7 @@ function addItemCardapio() {
 function updateEditLists() {
     let h = "";
     ['massas', 'recheios', 'coberturas', 'tamanhos'].forEach(t => {
-        h += `<div style="background:#eee; padding:5px; margin-top:10px; font-weight:bold; font-size:0.7em">${t.toUpperCase()}</div>`;
+        h += `<div style="background:#2d2d2d; padding:5px; margin-top:10px; font-weight:bold; font-size:0.7em">${t.toUpperCase()}</div>`;
         for(let i in config[t]) h += `<div class="list-item">${i} (R$ ${config[t][i].toFixed(2)}) <button onclick="delete config['${t}']['${i}']; salvarTudo(); updateEditLists()" style="background:red; padding:2px 6px">X</button></div>`;
     });
     document.getElementById('listCardapio').innerHTML = h;
