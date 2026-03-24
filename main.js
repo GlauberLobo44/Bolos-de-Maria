@@ -138,6 +138,7 @@ function renderCalendar() {
         h.style.fontSize = '12px';
         h.style.padding = '5px 0';
         h.style.borderBottom = '1px solid #ccc';
+        h.style.marginBottom='5px';
         grid.appendChild(h);
     });
 
