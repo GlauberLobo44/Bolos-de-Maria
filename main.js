@@ -3,6 +3,7 @@ let pedidos = [];
 let dataSelecionada = {};
 const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 
+//cria um json para salvar dados no localStorage
 function salvarTudo() {
     localStorage.setItem('conf_pedidos', JSON.stringify(pedidos)); 
     localStorage.setItem('conf_config', JSON.stringify(config)); 
@@ -20,17 +21,29 @@ function init() {
     renderCalendar();
 }
 
+//Página configurar/editar
+
+//Adicionar clientes manualmente
 function updateClienteInfo(idx, campo, valor) { config.clientes[idx][campo] = valor; salvarTudo(); }
 function addClienteManual() {
     const n = document.getElementById('addNomeCli').value.trim(), c = document.getElementById('addContCli').value.trim();
-    if(n) { config.clientes.push({nome: n, contato: c}); salvarTudo(); updateEditLists(); document.getElementById('addNomeCli').value=''; document.getElementById('addContCli').value=''; }
+    if(n) { config.clientes.push({nome: n, contato: c}); salvarTudo(); updateEditLists(); document.getElementById('addNomeCli').value=''; 
+           document.getElementById('addContCli').value=''; 
+          }
 }
 
+//Adicionar itens no cardápio{sabores e tamanho da forma}
 function addItemCardapio() {
     const n = document.getElementById('addNomeItem').value.trim(), p = parseFloat(document.getElementById('addPrecoItem').value) || 0, t = document.getElementById('addTipoItem').value;
-    if(n) { config[t][n] = p; salvarTudo(); updateEditLists(); document.getElementById('addNomeItem').value=''; document.getElementById('addPrecoItem').value=''; }
+    if(n) { 
+        config[t][n] = p; 
+        salvarTudo(); 
+        updateEditLists(); 
+        document.getElementById('addNomeItem').value=''; 
+        document.getElementById('addPrecoItem').value=''; }
 }
 
+//Disponibiliza os elementos adicionados
 function updateEditLists() {
     let h = "";
     ['massas', 'recheios', 'coberturas', 'tamanhos'].forEach(t => {
@@ -46,16 +59,19 @@ function updateEditLists() {
         </div>`).join('');
 }
 
+//Formula de calculo
 function calcTotal() {
     const s = parseFloat(config.sinal) || 0, m = config.massas[document.getElementById('pMassa').value] || 0, r = config.recheios[document.getElementById('pRecheio').value] || 0, c = config.coberturas[document.getElementById('pCobertura').value] || 0, t = config.tamanhos[document.getElementById('pTamanho').value] || 0, cam = parseInt(document.getElementById('pCamadas').value) || 1;
     document.getElementById('totalDisplay').innerText = (s + m + (r * cam) + c + t).toFixed(2);
 }
 
+//Criar pedido
 function salvarPedido() {
     const hoje = new Date(); hoje.setHours(0,0,0,0);
     const anoAtivo = parseInt(document.getElementById('selAno').value);
     const dataPedido = new Date(anoAtivo, dataSelecionada.m, dataSelecionada.d);
 
+    //Logica para criar/salvar pedidos
     if (dataPedido < hoje) { alert("⚠️ Não é possível adicionar pedidos em datas passadas!"); return; }
 
     const nome = document.getElementById('pNome').value.trim();
@@ -80,7 +96,10 @@ function salvarPedido() {
     if(id) pedidos = pedidos.map(x => x.id == id ? p : x); else pedidos.push(p);
     if(nome && !config.clientes.some(c => c.nome.toLowerCase() === nome.toLowerCase())) config.clientes.push({nome, contato: p.contato});
 
-    salvarTudo(); closeModal('modalForm'); renderCalendar(); renderAgenda();
+    salvarTudo(); 
+    closeModal('modalForm'); 
+    renderCalendar(); 
+    renderAgenda();
 
     const total = (parseFloat(config.sinal) + (config.massas[p.massa]||0) + ((config.recheios[p.recheio]||0)*p.camadas) + (config.coberturas[p.cobertura]||0) + (config.tamanhos[p.tamanho]||0)).toFixed(2);
     document.getElementById('reciboConteudo').innerHTML = `
@@ -91,20 +110,23 @@ function salvarPedido() {
     document.getElementById('modalRecibo').style.display = 'flex';
 }
 
+//Página do calendario
+
+//Cria o calendario
 function renderCalendar() {
     const grid = document.getElementById('calGrid'); 
     grid.innerHTML = '';
     
-    // Configuração do Grid para 7 colunas iguais
+    // Layout do calendario
     grid.style.display = 'grid';
     grid.style.gridTemplateColumns = 'repeat(7, 1fr)';
-    grid.style.gap = '2px'; // Espaço fino entre os dias (estilo tabela)
+    grid.style.gap = '2px';
     grid.style.width = '100%';
 
     const m = parseInt(document.getElementById('selMes').value), 
           a = parseInt(document.getElementById('selAno').value);
     
-    // 1. Renderiza o cabeçalho (Dom, Seg, Ter...)
+    // Cria o cabeçalho (Dom, Seg, Ter...)
     diasSemana.forEach(dia => {
         const h = document.createElement('div');
         h.innerText = dia;
@@ -116,22 +138,22 @@ function renderCalendar() {
         grid.appendChild(h);
     });
 
-    // 2. Calcula o primeiro dia da semana para alinhar o calendário
+    // Calcula o primeiro dia da semana para alinhar o calendário
     const primeiroDiaMes = new Date(a, m, 1).getDay();
     for (let s = 0; s < primeiroDiaMes; s++) {
         const vazio = document.createElement('div');
-        vazio.style.border = '1px solid #f9f9f9'; // Espaço vazio sutil
+        vazio.style.border = '1px solid #f9f9f9'; 
         grid.appendChild(vazio);
     }
 
-    // 3. Renderiza os dias do mês
+    // Cria 1 day-slot para cada dia do mês
     const totalDias = new Date(a, m + 1, 0).getDate();
     for (let i = 1; i <= totalDias; i++) {
         const ords = pedidos.filter(p => p.dia == i && p.mes == m);
         const slot = document.createElement('div');
         slot.className = 'day-slot';
         
-        // Estilo visual solicitado: Numero topo-esquerdo, Status centro, cor preta
+        // Estilo visual do day-slot
         slot.style.position = 'relative';
         slot.style.minHeight = '70px';
         slot.style.border = '1px solid #ddd';
@@ -151,7 +173,7 @@ function renderCalendar() {
     }
 }
 
-
+//Lista de pedidos do dia (no day-slot)
 function openListaDia(d, m) {
     dataSelecionada = {d, m}; document.getElementById('modalListaDia').style.display = 'flex';
     document.getElementById('tituloListaDia').innerText = `Pedidos: ${d}/${m+1}`;
@@ -162,6 +184,9 @@ function openListaDia(d, m) {
         <button onclick="removerPedido('${p.id}')" style="background:red">X</button></div></div>`).join('') || 'Vazio';
 }
 
+//Pagina da agenda drag and drop
+
+//Criar a agenda
 function renderAgenda() {
     const lp = document.getElementById('listaCardsPendentes'); if(lp) lp.innerHTML = '';
     pedidos.filter(p => p.local === 'pendentes').forEach(p => lp.appendChild(createOrderCard(p)));
@@ -175,6 +200,7 @@ function renderAgenda() {
     }
 }
 
+//Criar o card de pedido
 function createOrderCard(p) {
     const hoje = new Date().setHours(0, 0, 0, 0);
     const anoA = parseInt(document.getElementById('selAno').value);
@@ -182,9 +208,12 @@ function createOrderCard(p) {
     if (p.local !== 'pendentes' && dataE.getTime() < hoje) return document.createTextNode(''); 
 
     const c = document.createElement('div'); c.className = 'order-card';
-    c.draggable = true; c.ondragstart = e => e.dataTransfer.setData("text", p.id);
+    //Habilita o recurso de arrastar e soltar
+    c.draggable = true; 
+    c.ondragstart = e => e.dataTransfer.setData("text", p.id);
     const diaF = String(p.dia).padStart(2, '0'), mesF = String(p.mes + 1).padStart(2, '0');
 
+    //Estilo do card
     c.innerHTML = `
         <div style="flex-grow: 1; pointer-events: none;">
             <div style="font-weight: bold;">${p.nome}</div>
@@ -197,24 +226,63 @@ function createOrderCard(p) {
     return c;
 }
 
-function removerPedidoCard(id) { if(confirm("Deseja excluir?")) { pedidos = pedidos.filter(p => p.id != id); salvarTudo(); renderCalendar(); renderAgenda(); } }
-function handleDrop(e, loc) { e.preventDefault(); const id = e.dataTransfer.getData("text"); const p = pedidos.find(x => x.id == id); if(p) { p.local = loc; salvarTudo(); renderAgenda(); } }
+function removerPedidoCard(id) { 
+    if(confirm("Deseja excluir?")) { 
+        pedidos = pedidos.filter(p => p.id != id); 
+        salvarTudo(); 
+        renderCalendar(); 
+        renderAgenda(); 
+    } 
+}
+
+function handleDrop(e, loc) { 
+    e.preventDefault(); 
+    const id = e.dataTransfer.getData("text"); 
+    const p = pedidos.find(x => x.id == id); 
+    if(p) { 
+        p.local = loc; 
+        salvarTudo(); 
+        renderAgenda(); 
+    } 
+}
+
 function allowDrop(e) { e.preventDefault(); }
 function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-function removerPedido(id) { pedidos = pedidos.filter(p => p.id != id); salvarTudo(); renderCalendar(); renderAgenda(); openListaDia(dataSelecionada.d, dataSelecionada.m); }
+function removerPedido(id) { 
+    pedidos = pedidos.filter(p => p.id != id); 
+    salvarTudo(); 
+    renderCalendar(); 
+    renderAgenda(); 
+    openListaDia(dataSelecionada.d, dataSelecionada.m); 
+}
 
+//permite abrir o form do pedido pelo Card
 function openFormPedido(id = null) {
-    closeModal('modalListaDia'); document.getElementById('modalForm').style.display = 'flex';
-    const carregar = (idS, obj) => { const k = Object.keys(obj); document.getElementById(idS).innerHTML = k.length ? k.map(x => `<option value="${x}">${x}</option>`).join('') : '<option disabled>Vazio</option>'; };
-    carregar('pMassa', config.massas); carregar('pRecheio', config.recheios); carregar('pCobertura', config.coberturas); carregar('pTamanho', config.tamanhos);
+    closeModal('modalListaDia'); 
+    document.getElementById('modalForm').style.display = 'flex';
+    const carregar = (idS, obj) => { 
+        const k = Object.keys(obj); 
+        document.getElementById(idS).innerHTML = k.length ? k.map(x => `<option value="${x}">${x}</option>`).join('') : '<option disabled>Vazio</option>'; 
+    };
+    
+    carregar('pMassa', config.massas); 
+    carregar('pRecheio', config.recheios); 
+    carregar('pCobertura', config.coberturas); 
+    carregar('pTamanho', config.tamanhos);
+    
     if(id) { 
         const p = pedidos.find(x => x.id == id); document.getElementById('pId').value = p.id; 
         document.getElementById('pNome').value = p.nome; document.getElementById('pContato').value = p.contato || ''; 
         document.getElementById('pCamadas').value = p.camadas || 1; 
-    } else { document.getElementById('pId').value = ''; document.getElementById('pNome').value = ''; document.getElementById('pContato').value = ''; }
+    } else { 
+        document.getElementById('pId').value = ''; 
+        document.getElementById('pNome').value = ''; 
+        document.getElementById('pContato').value = ''; 
+    }
     calcTotal();
 }
 
+//Cria janela que permite gerar o recibo em pdf ou impressão
 function imprimirRecibo() {
     const conteudo = document.getElementById('reciboConteudo').innerHTML;
     const win = window.open('', '', 'width=600,height=600');
@@ -225,6 +293,7 @@ function imprimirRecibo() {
 function showPage(p) { 
     document.querySelectorAll('.page').forEach(pg => pg.classList.remove('active')); 
     document.getElementById(p).classList.add('active'); 
-    if(p === 'editar') updateEditLists(); if(p === 'agenda') renderAgenda(); 
+    if(p === 'editar') updateEditLists(); 
+    if(p === 'agenda') renderAgenda(); 
 }
 window.onload = init;
